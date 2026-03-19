@@ -167,7 +167,8 @@ function renderManhattanPlot() {
   }
 
   const chrOrder = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y'];
-  let plotData = filtered.filter(d => !isNaN(Number(d.P_haEWAS)) && Number(d.P_haEWAS) > 0 && d.Chromosome && d.Start);
+
+  let plotData = filtered.filter(d => d.Chromosome && d.Start);
 
   let chrOffsets = {};
   let tickVals = [];
@@ -190,10 +191,11 @@ function renderManhattanPlot() {
     'haEWAS-specific': '#e63946',
     'Common': '#2a9d8f',
     'common': '#2a9d8f',          
-    'EWAS-specific': '#457b9d'
+    'EWAS-specific': '#457b9d',
+    'Beta-specific': '#457b9d'
   };
 
-  const drawOrder = ['EWAS-specific', 'Common', 'common', 'haEWAS-specific'];
+  const drawOrder = ['EWAS-specific', 'Beta-specific', 'Common', 'common', 'haEWAS-specific'];
   let uniqueGroups = [...new Set(plotData.map(d => d.Group))].filter(Boolean);
   
   uniqueGroups.sort((a, b) => {
@@ -219,11 +221,28 @@ function renderManhattanPlot() {
       if (offset === undefined) return;
 
       xVals.push(offset + Number(d.Start));
-      yVals.push(-Math.log10(Number(d.P_haEWAS)));
-      textVals.push(`<b>CpG:</b> ${d.CpG_ID}<br><b>Gene:</b> ${d.Gene_name || 'N/A'}<br><b>Chr:</b> ${d.Chromosome}:${d.Start}<br><b>Group:</b> ${d.Group}<br><b>P-value:</b> ${formatNumber(d.P_haEWAS)}`);
+
+      let plotP = Number(d.P_haEWAS);
+      
+      if (d.Group === 'EWAS-specific' || d.Group === 'Beta-specific') {
+        plotP = Number(d.P_Beta);
+      }
+
+      if (isNaN(plotP) || plotP <= 0) plotP = 1e-300; 
+
+      yVals.push(-Math.log10(plotP));
+
+      textVals.push(
+        `<b>CpG:</b> ${d.CpG_ID}<br>` +
+        `<b>Gene:</b> ${d.Gene_name || 'N/A'}<br>` +
+        `<b>Chr:</b> ${d.Chromosome}:${d.Start}<br>` +
+        `<b>Group:</b> ${d.Group}<br>` +
+        `<b>P_haEWAS:</b> ${formatNumber(d.P_haEWAS)}<br>` +
+        `<b>P_Beta:</b> ${formatNumber(d.P_Beta)}`
+      );
     });
 
-    let isTarget = grp === 'haEWAS-specific';
+    let isTarget = (grp === 'haEWAS-specific');
 
     traces.push({
       x: xVals,
@@ -270,7 +289,7 @@ function renderManhattanPlot() {
       tickangle: 0
     },
     yaxis: {
-      title: '-log10(P-value)',
+      title: 'Targeted -log10(P-value)',
       zeroline: true
     },
     margin: { t: 100, l: 60, r: 20, b: 60 },
