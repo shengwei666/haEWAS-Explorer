@@ -1,9 +1,10 @@
-// assets/explore.js — Local manifest + Papa Parse in a Web Worker
+// assets/explore.js — Local manifest + Papa Parse + IndexedDB Cache + Debouncing
 
 const PROJECT_SLUG = 'hetero-ewas-explorer'; 
 const UPDATE_INTERVAL_MS = 300; 
 const MANIFEST_REL = 'data/downloads/index.json';
 const CSV_DIR_REL  = 'data/downloads';
+const CACHE_VERSION = "v1.0";
 
 function detectBasePrefix() {
   const p = location.pathname;
@@ -24,7 +25,6 @@ let rawData = [];
 let filtered = [];
 let sortKey = 'P_haEWAS'; 
 let sortAsc = true;
-
 let page = 1;
 let pageSize = 10; 
 
@@ -32,6 +32,56 @@ let lastRenderTs = 0;
 let loadingState = { totalFiles: 0, completedFiles: 0 };
 let totalRowsLoaded = 0;
 const errorLog = [];
+
+const DB_NAME = 'haEWAS_Cache_DB';
+const DB_VERSION = 1;
+const STORE_NAME = 'csvStore';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME);
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function getCachedData() {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get('all_rows');
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (e) {
+    console.warn('IndexedDB read failed:', e);
+    return null;
+  }
+}
+
+async function setCachedData(data) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.put(data, 'all_rows');
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  } catch (e) {
+    console.warn('IndexedDB write failed:', e);
+  }
+}
+// ==========================================
 
 function uniqueValues(arr, key) {
   return [...new Set(arr.map(d => d[key]).filter(Boolean))]
@@ -274,32 +324,12 @@ function renderManhattanPlot() {
     : `Comparative Landscape of haEWAS and Conventional EWAS`;
 
   const layout = {
-    title: { 
-      text: plotTitle, 
-      font: { size: 16 }
-    },
+    title: { text: plotTitle, font: { size: 16 } },
     showlegend: true, 
-    legend: { 
-      orientation: 'h', 
-      y: 1.05,           
-      x: 0.5, 
-      xanchor: 'center',
-      yanchor: 'bottom', 
-      font: { size: 16 } 
-    },
+    legend: { orientation: 'h', y: 1.05, x: 0.5, xanchor: 'center', yanchor: 'bottom', font: { size: 16 } },
     hovermode: 'closest',
-    xaxis: {
-      title: 'Chromosome',
-      tickvals: tickVals,
-      ticktext: tickText,
-      showgrid: false,
-      zeroline: false,
-      tickangle: 0
-    },
-    yaxis: {
-      title: 'Significance: -log10(P)',
-      zeroline: true
-    },
+    xaxis: { title: 'Chromosome', tickvals: tickVals, ticktext: tickText, showgrid: false, zeroline: false, tickangle: 0 },
+    yaxis: { title: 'Significance: -log10(P)', zeroline: true },
     margin: { t: 100, l: 60, r: 20, b: 60 },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)'
@@ -322,7 +352,7 @@ function renderManhattanPlot() {
   }
 }
 
-// ----- Sort indicators (⇅ ▲ ▼) -----
+// ----- Sort indicators -----
 function ensureSortIndicators() {
   document.querySelectorAll('#resultsTable thead th').forEach(th => {
     const key = th.dataset.sort;
@@ -364,7 +394,6 @@ function initSort() {
   document.querySelectorAll('#resultsTable thead th').forEach(th => {
     const key = th.dataset.sort;
     if (!key) return;
-
     const toggle = () => {
       if (sortKey === key) { sortAsc = !sortAsc; }
       else { sortKey = key; sortAsc = true; }
@@ -372,7 +401,6 @@ function initSort() {
       updateSortIndicators();
       renderTable(true);
     };
-
     th.addEventListener('click', toggle);
     th.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
@@ -389,8 +417,7 @@ function initPager() {
   if (pageSizeSelect) {
     pageSizeSelect.addEventListener('change', (e) => {
       pageSize = parseInt(e.target.value, 10);
-      page = 1; 
-      renderTable(true);
+      page = 1; renderTable(true);
     });
   }
 
@@ -398,26 +425,17 @@ function initPager() {
     pageInput.addEventListener('change', (e) => {
       let val = parseInt(e.target.value, 10);
       const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-      
       if (isNaN(val) || val < 1) val = 1;
       if (val > totalPages) val = totalPages;
-      
-      page = val;
-      renderTable(true);
+      page = val; renderTable(true);
     });
   }
 
-  if (btnPrev) {
-    btnPrev.addEventListener('click', () => {
-      if (page > 1) { page--; renderTable(true); }
-    });
-  }
-  if (btnNext) {
-    btnNext.addEventListener('click', () => {
-      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-      if (page < totalPages) { page++; renderTable(true); }
-    });
-  }
+  if (btnPrev) btnPrev.addEventListener('click', () => { if (page > 1) { page--; renderTable(true); } });
+  if (btnNext) btnNext.addEventListener('click', () => {
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+    if (page < totalPages) { page++; renderTable(true); }
+  });
 }
 
 function initReset() {
@@ -437,40 +455,36 @@ function initReset() {
 function initScrollSync() {
   const topScroll = document.getElementById('topScrollWrapper');
   const tableWrap = document.getElementById('tableWrap');
-  
   if (topScroll && tableWrap) {
-    topScroll.addEventListener('scroll', () => {
-      tableWrap.scrollLeft = topScroll.scrollLeft;
-    });
-    tableWrap.addEventListener('scroll', () => {
-      topScroll.scrollLeft = tableWrap.scrollLeft;
-    });
+    topScroll.addEventListener('scroll', () => { tableWrap.scrollLeft = topScroll.scrollLeft; });
+    tableWrap.addEventListener('scroll', () => { topScroll.scrollLeft = tableWrap.scrollLeft; });
   }
 }
 
-function renderLoadingStatus() {
-  const { totalFiles, completedFiles } = loadingState;
+function renderLoadingStatusCustom(msg) {
   const footer = document.getElementById('tableFooter');
   if (!footer) return;
-  const statusId = 'loadingStatus';
-  let el = document.getElementById(statusId);
+  let el = document.getElementById('loadingStatus');
   if (!el) {
     el = document.createElement('div');
-    el.id = statusId;
+    el.id = 'loadingStatus';
     el.style.opacity = '0.85';
     el.style.whiteSpace = 'pre-line';
     footer.prepend(el);
   }
+  el.textContent = msg;
+}
+
+function renderLoadingStatus() {
+  const { totalFiles, completedFiles } = loadingState;
   let msg = '';
   if (totalFiles > 0 && completedFiles < totalFiles) {
     msg = `Loading CSVs: ${completedFiles} / ${totalFiles} completed…\nRows loaded: ${totalRowsLoaded}`;
   } else if (totalFiles > 0) {
     msg = `Loaded ${completedFiles} CSV file(s). Rows loaded: ${totalRowsLoaded}`;
   }
-  if (errorLog.length) {
-    msg += `\nErrors (${errorLog.length}):\n- ` + errorLog.join('\n- ');
-  }
-  el.textContent = msg;
+  if (errorLog.length) msg += `\nErrors (${errorLog.length}):\n- ` + errorLog.join('\n- ');
+  renderLoadingStatusCustom(msg);
 }
 
 function applyFilters() {
@@ -500,18 +514,24 @@ function applyFilters() {
       let plotP = Number(rawP);
       if (isNaN(plotP) || plotP > maxP) return false;
     }
-
     return true;
   });
 
   sortData();
   page = 1;
   renderTable(true);
-  
   renderManhattanPlot();
 }
 
-// ----- Manifest + Loading -----
+let renderTimeout = null;
+function debouncedApplyFilters() {
+  if (renderTimeout) return;
+  renderTimeout = setTimeout(() => {
+    applyFilters();
+    renderTimeout = null;
+  }, 800);
+}
+
 async function loadManifest() {
   const res = await fetch(MANIFEST_URL);
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${MANIFEST_URL}`);
@@ -519,25 +539,16 @@ async function loadManifest() {
   if (!json || !Array.isArray(json.files)) {
     throw new Error('Manifest must be a JSON object with a "files" array.');
   }
-  return json.files
-    .filter(name => /\.csv$/i.test(name))
-    .map(name => ({ name, url: csvAbsUrl(name) }));
+  return json.files.filter(name => /\.csv$/i.test(name)).map(name => ({ name, url: csvAbsUrl(name) }));
 }
 
 function loadCsvWithWorker(url, name) {
   return new Promise((resolve) => {
     const worker = new Worker(WORKER_URL, { type: 'classic' });
-
     worker.onmessage = (e) => {
       const { type, rows, total, error } = e.data || {};
       if (type === 'rows') {
-        
-        rows.forEach(r => {
-          if (r.Group === 'Beta-specific') {
-            r.Group = 'EWAS-specific';
-          }
-        });
-
+        rows.forEach(r => { if (r.Group === 'Beta-specific') r.Group = 'EWAS-specific'; });
         rawData.push(...rows);
         totalRowsLoaded += rows.length;
 
@@ -547,50 +558,61 @@ function loadCsvWithWorker(url, name) {
           updateSortIndicators();
           renderTable(); 
         } else {
-          applyFilters();
+          debouncedApplyFilters();
         }
         renderLoadingStatus();
       } else if (type === 'complete') {
         loadingState.completedFiles++;
         renderLoadingStatus();
-
-        updateSelects();
-        applyFilters();
-        updateSortIndicators();
-        renderTable(true);
-
         resolve({ name, rows: total || 0 });
         worker.terminate();
       } else if (type === 'error') {
         loadingState.completedFiles++;
         errorLog.push(`${name}: ${String(error)}`);
         renderLoadingStatus();
-        console.error('CSV worker error:', name, error);
         resolve({ name, rows: 0, error: String(error) });
         worker.terminate();
       }
     };
-
     worker.onerror = (err) => {
       loadingState.completedFiles++;
       errorLog.push(`${name}: ${String(err?.message || err)}`);
       renderLoadingStatus();
-      console.error('Worker runtime error:', name, err?.message || err);
       resolve({ name, rows: 0, error: String(err?.message || err) });
       worker.terminate();
     };
-
     worker.postMessage({ url, fileLabel: name, batchSize: 4000 });
   });
 }
 
-async function loadAllCSVsConcurrent(concurrencyLimit = 6) {
+async function bootData() {
   const files = await loadManifest();
+  
+  const currentManifestHash = CACHE_VERSION + JSON.stringify(files);
+  const cachedManifestHash = localStorage.getItem('haEWAS_manifest_hash');
+
+  if (cachedManifestHash === currentManifestHash) {
+    renderLoadingStatusCustom('Loading data instantly from local browser cache...');
+    const cachedData = await getCachedData();
+    if (cachedData && cachedData.length > 0) {
+      rawData = cachedData;
+      totalRowsLoaded = rawData.length;
+      
+      updateSelects();
+      applyFilters();
+      updateSortIndicators();
+      
+      renderLoadingStatusCustom(`⚡ Loaded ${totalRowsLoaded} rows from local cache in milliseconds.`);
+      return;
+    }
+  }
+
   loadingState.totalFiles = files.length;
   loadingState.completedFiles = 0;
   renderLoadingStatus();
 
   let i = 0;
+  const concurrencyLimit = 6;
   const runners = Array(concurrencyLimit).fill().map(async () => {
     while (i < files.length) {
       const f = files[i++];
@@ -599,9 +621,18 @@ async function loadAllCSVsConcurrent(concurrencyLimit = 6) {
   });
 
   await Promise.all(runners);
+
+  updateSelects();
+  applyFilters();
+  updateSortIndicators();
+  renderTable(true);
+  renderLoadingStatusCustom(`Loaded ${totalRowsLoaded} rows. Saving to local cache for next time...`);
+
+  await setCachedData(rawData);
+  localStorage.setItem('haEWAS_manifest_hash', currentManifestHash);
+  renderLoadingStatusCustom(`Loaded ${totalRowsLoaded} rows. Ready!`);
 }
 
-// ----- Boot -----
 document.addEventListener('DOMContentLoaded', async () => {
   initSort();
   initPager(); 
@@ -617,15 +648,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   try {
-    await loadAllCSVsConcurrent();
+    await bootData();
   } catch (e) {
     console.error('Failed to load CSVs:', e);
     const tbody = document.querySelector('#resultsTable tbody');
-    tbody.innerHTML = `<tr><td colspan="18" style="text-align:center;">
-      Failed to load CSVs. ${String(e?.message || e)}<br>
-      Make sure <code>${MANIFEST_URL}</code> exists and lists your CSV files.
-    </td></tr>`;
-    document.getElementById('rowCount').textContent = `0 rows`;
-    document.getElementById('totalPagesInfo').textContent = `1`;
+    tbody.innerHTML = `<tr><td colspan="18" style="text-align:center;">Failed to load data. ${String(e?.message || e)}</td></tr>`;
   }
 });
