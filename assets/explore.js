@@ -167,7 +167,6 @@ function renderManhattanPlot() {
   }
 
   const chrOrder = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y'];
-
   let plotData = filtered.filter(d => d.Chromosome && d.Start);
 
   let chrOffsets = {};
@@ -222,21 +221,30 @@ function renderManhattanPlot() {
 
       xVals.push(offset + Number(d.Start));
 
-      let plotP = Number(d.P_haEWAS);
-      
-      if (d.Group === 'EWAS-specific' || d.Group === 'Beta-specific') {
+      let plotP;
+      if (d.Group === 'haEWAS-specific') {
+        plotP = Number(d.P_haEWAS);
+      } else if (d.Group === 'EWAS-specific' || d.Group === 'Beta-specific') {
         plotP = Number(d.P_Beta);
+      } else if (d.Group === 'Common' || d.Group === 'common') {
+        plotP = Number(d.P_Beta);
+      } else {
+        plotP = Number(d.P_haEWAS);
       }
 
       if (isNaN(plotP) || plotP <= 0) plotP = 1e-300; 
 
       yVals.push(-Math.log10(plotP));
 
+      let plottedPName = (d.Group === 'haEWAS-specific') ? 'P_haEWAS' : 'P_Beta';
+
       textVals.push(
         `<b>CpG:</b> ${d.CpG_ID}<br>` +
         `<b>Gene:</b> ${d.Gene_name || 'N/A'}<br>` +
         `<b>Chr:</b> ${d.Chromosome}:${d.Start}<br>` +
         `<b>Group:</b> ${d.Group}<br>` +
+        `----------------------<br>` +
+        `<b>Plotting Y:</b> -log10(${plottedPName})<br>` +
         `<b>P_haEWAS:</b> ${formatNumber(d.P_haEWAS)}<br>` +
         `<b>P_Beta:</b> ${formatNumber(d.P_Beta)}`
       );
@@ -289,7 +297,7 @@ function renderManhattanPlot() {
       tickangle: 0
     },
     yaxis: {
-      title: 'Targeted -log10(P-value)',
+      title: 'Significance: -log10(P)',
       zeroline: true
     },
     margin: { t: 100, l: 60, r: 20, b: 60 },
