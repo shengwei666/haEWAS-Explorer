@@ -1,15 +1,12 @@
 # Heterogeneity-Adjusted EWAS Explorer (v1.0)
 
-**Heterogeneity-Adjusted EWAS Explorer** is a web portal designed for the exploration and visualization of DNA methylation meta-analysis summaries. By implementing a **Heterogeneity-Adjusted (haEWAS)** framework, this platform enables the identification of phenotype-associated CpG markers driven by methylation heterogeneity (**CHALM** and **CAMDA**)—signals that are typically masked in conventional Beta-value-based Epigenome-Wide Association Studies (EWAS).
+**Heterogeneity-Adjusted EWAS Explorer** is a web portal for the exploration, visualization, and **transformation** of DNA methylation data. By implementing the **Heterogeneity-Adjusted (haEWAS)** framework, this platform enables the identification of phenotype-associated CpG markers driven by methylation heterogeneity (**CHALM** and **CAMDA**) — signals typically masked in conventional Beta-value-based Epigenome-Wide Association Studies (EWAS).
 
 ## Key Features
 
-* **Global Statistics Dashboard:** Visualizes the "haEWAS Advantage" through interactive donut charts and grouped bar plots, comparing haEWAS-specific discoveries against conventional EWAS results across 40+ phenotypes.
+* **Online Matrix Converter:** Seamlessly transform standard methylation Beta-value arrays (EPIC/850k or HM450k) into Heterogeneity-Adjusted matrices (CHALM & CAMDA) using our high-performance cloud engine.
+* **Global Statistics Dashboard:** Visualizes the interactive donut charts and grouped bar plots, comparing haEWAS-specific discoveries against conventional EWAS results across 40+ phenotypes.
 * **Interactive Manhattan Plots:** Dynamic genome-wide association views seamlessly linked to data tables. Users can click any data point on the plot to instantly filter the corresponding statistics in the table below.
-* **Dual-Layer Data Mining:**
-    * **Macro-scale:** Explore genomic context distribution (TSS1500, Body, etc.) and primary heterogeneity drivers.
-    * **Micro-scale:** Search by CpG ID, Gene Name, or Genomic Location with real-time filtering and sorting.
-* **Reproducible Science:** One-click downloads for full meta-analysis summary statistics in standardized CSV formats.
 
 ## Citation
 
