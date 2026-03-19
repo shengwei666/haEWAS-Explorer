@@ -1,8 +1,5 @@
 # Heterogeneity-Adjusted EWAS Explorer (v1.0)
 
-[![GitHub Pages](https://img.shields.io/badge/Status-Live-brightgreen)](https://shengwei666.github.io/haEWAS-Explorer/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 **Heterogeneity-Adjusted EWAS Explorer** is a web portal designed for the exploration and visualization of DNA methylation meta-analysis summaries. By implementing a **Heterogeneity-Adjusted (haEWAS)** framework, this platform enables the identification of phenotype-associated CpG markers driven by methylation heterogeneity (**CHALM** and **CAMDA**)—signals that are typically masked in conventional Beta-value-based Epigenome-Wide Association Studies (EWAS).
 
 ## Key Features
