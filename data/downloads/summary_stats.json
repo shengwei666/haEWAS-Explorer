@@ -1,9 +1,9 @@
 {
   "phenotypes": {
-    "Huntingtons_Disease": {
-      "total": 20250,
+    "Huntingtons_Disease_Brain": {
+      "total": 20209,
       "groups": {
-        "Beta-specific": 8872,
+        "Beta-specific": 8831,
         "haEWAS-specific": 6742,
         "Common": 4636
       },
@@ -78,20 +78,7 @@
         "CAMDA": 720
       }
     },
-    "Braak_Stage_Summary": {
-      "total": 4204,
-      "groups": {
-        "Common": 3112,
-        "Beta-specific": 326,
-        "haEWAS-specific": 766
-      },
-      "drivers": {
-        "Both": 2331,
-        "CHALM": 827,
-        "CAMDA": 720
-      }
-    },
-    "Total_PBB_Exposure": {
+    "Total_PBB_Exposure_Blood": {
       "total": 3318,
       "groups": {
         "haEWAS-specific": 2903,
@@ -104,7 +91,7 @@
         "Both": 314
       }
     },
-    "Postmenstrual_Age_Weeks": {
+    "Postmenstrual_Age_Weeks_Oral": {
       "total": 2816,
       "groups": {
         "haEWAS-specific": 2320,
@@ -117,7 +104,7 @@
         "CHALM": 814
       }
     },
-    "Ulcerative_Colitis": {
+    "Ulcerative_Colitis_Colon": {
       "total": 2792,
       "groups": {
         "haEWAS-specific": 2709,
@@ -247,7 +234,7 @@
         "CAMDA": 95
       }
     },
-    "Idiopathic_Pulmonary_Fibrosis": {
+    "Idiopathic_Pulmonary_Fibrosis_Lung": {
       "total": 562,
       "groups": {
         "haEWAS-specific": 461,
@@ -312,7 +299,7 @@
         "CAMDA": 35
       }
     },
-    "Edematous_Severe_Acute_Malnutrition": {
+    "Edematous_Severe_Acute_Malnutrition_Oral": {
       "total": 323,
       "groups": {
         "Common": 190,
@@ -325,7 +312,7 @@
         "CAMDA": 27
       }
     },
-    "Sporadic_Creutzfeldt-Jakob_Disease": {
+    "Sporadic_Creutzfeldt-Jakob_Disease_Blood": {
       "total": 313,
       "groups": {
         "Common": 103,
@@ -441,7 +428,7 @@
         "CAMDA": 25
       }
     },
-    "Adolescent_Victimization": {
+    "Adolescent_Victimization_Oral": {
       "total": 131,
       "groups": {
         "Common": 44,
@@ -453,11 +440,11 @@
         "Both": 6
       }
     },
-    "Psoriasis": {
-      "total": 109,
+    "Psoriasis_Skin": {
+      "total": 108,
       "groups": {
         "haEWAS-specific": 70,
-        "Beta-specific": 28,
+        "Beta-specific": 27,
         "Common": 11
       },
       "drivers": {
@@ -466,7 +453,7 @@
         "Both": 20
       }
     },
-    "Preeclampsia": {
+    "Preeclampsia_Blood": {
       "total": 63,
       "groups": {
         "haEWAS-specific": 46,
@@ -479,7 +466,7 @@
         "Both": 15
       }
     },
-    "Behavior_Score_Index": {
+    "Behavior_Score_Index_Oral": {
       "total": 50,
       "groups": {
         "haEWAS-specific": 50
@@ -503,7 +490,7 @@
         "CAMDA": 22
       }
     },
-    "HOMA-IR": {
+    "HOMA-IR_Blood": {
       "total": 40,
       "groups": {
         "haEWAS-specific": 27,
@@ -516,7 +503,7 @@
         "Both": 2
       }
     },
-    "Waist_Circumference_CM": {
+    "Waist_Circumference_CM_Colon": {
       "total": 38,
       "groups": {
         "haEWAS-specific": 38
@@ -551,23 +538,12 @@
         "CAMDA": 1
       }
     },
-    "PSA_Amount": {
+    "PSA_Amount_Blood": {
       "total": 18,
       "groups": {
         "Beta-specific": 18
       },
       "drivers": {}
-    },
-    "Asthma_Blood": {
-      "total": 12,
-      "groups": {
-        "Beta-specific": 2,
-        "haEWAS-specific": 10
-      },
-      "drivers": {
-        "CAMDA": 2,
-        "CHALM": 8
-      }
     },
     "BMI_Blood": {
       "total": 12,
@@ -581,52 +557,63 @@
         "CHALM": 3,
         "CAMDA": 1
       }
+    },
+    "Asthma_Blood": {
+      "total": 12,
+      "groups": {
+        "Beta-specific": 2,
+        "haEWAS-specific": 10
+      },
+      "drivers": {
+        "CAMDA": 2,
+        "CHALM": 8
+      }
     }
   },
   "groups": {
-    "Beta-specific": 32542,
-    "haEWAS-specific": 31739,
-    "Common": 20930
+    "Beta-specific": 32174,
+    "haEWAS-specific": 30973,
+    "Common": 17818
   },
   "drivers": {
     "Common": {
-      "Both": 9845,
-      "CHALM": 6674,
-      "CAMDA": 4411
+      "Both": 7639,
+      "CHALM": 6069,
+      "CAMDA": 4110
     },
     "haEWAS-specific": {
-      "CAMDA": 18029,
-      "CHALM": 10382,
-      "Both": 3328
+      "CAMDA": 17610,
+      "CHALM": 10160,
+      "Both": 3203
     }
   },
   "regions": {
     "Beta-specific": {
-      "Body": 24061,
-      "TSS1500": 6442,
-      "5'UTR": 6156,
-      "TSS200": 3446,
-      "3'UTR": 2340,
-      "1stExon": 2280,
+      "Body": 23769,
+      "TSS1500": 6343,
+      "5'UTR": 6082,
+      "TSS200": 3384,
+      "3'UTR": 2315,
+      "1stExon": 2250,
       "ExonBnd": 63
     },
-    "Common": {
-      "Body": 15556,
-      "TSS1500": 4263,
-      "5'UTR": 4189,
-      "TSS200": 1757,
-      "1stExon": 1419,
-      "3'UTR": 1279,
-      "ExonBnd": 59
-    },
     "haEWAS-specific": {
-      "Body": 24064,
-      "5'UTR": 6762,
-      "TSS1500": 6503,
-      "TSS200": 3641,
-      "1stExon": 2183,
-      "3'UTR": 1706,
+      "Body": 23623,
+      "5'UTR": 6566,
+      "TSS1500": 6275,
+      "TSS200": 3501,
+      "1stExon": 2088,
+      "3'UTR": 1672,
       "ExonBnd": 205
+    },
+    "Common": {
+      "Body": 13412,
+      "TSS1500": 3637,
+      "5'UTR": 3494,
+      "TSS200": 1459,
+      "1stExon": 1130,
+      "3'UTR": 1060,
+      "ExonBnd": 59
     }
   }
 }
