@@ -190,10 +190,10 @@ function renderManhattanPlot() {
     'haEWAS-specific': '#e63946',
     'Common': '#2a9d8f',
     'common': '#2a9d8f',          
-    'Beta-specific': '#457b9d'
+    'EWAS-specific': '#457b9d'
   };
 
-  const drawOrder = ['Beta-specific', 'Common', 'common', 'haEWAS-specific'];
+  const drawOrder = ['EWAS-specific', 'Common', 'common', 'haEWAS-specific'];
   let uniqueGroups = [...new Set(plotData.map(d => d.Group))].filter(Boolean);
   
   uniqueGroups.sort((a, b) => {
@@ -486,6 +486,13 @@ function loadCsvWithWorker(url, name) {
     worker.onmessage = (e) => {
       const { type, rows, total, error } = e.data || {};
       if (type === 'rows') {
+        
+        rows.forEach(r => {
+          if (r.Group === 'Beta-specific') {
+            r.Group = 'EWAS-specific';
+          }
+        });
+
         rawData.push(...rows);
         totalRowsLoaded += rows.length;
 

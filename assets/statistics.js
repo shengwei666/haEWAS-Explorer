@@ -23,10 +23,10 @@ const colorMap = {
   'haEWAS-specific': '#e63946',
   'Common': '#2a9d8f',
   'common': '#2a9d8f',
-  'Beta-specific': '#457b9d'
+  'EWAS-specific': '#457b9d'
 };
 
-const drawOrder = ['haEWAS-specific', 'Common', 'Beta-specific']; 
+const drawOrder = ['haEWAS-specific', 'Common', 'EWAS-specific']; 
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
