@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Converter - haEWAS Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    .iframe-container {
+      width: 100%;
+      height: calc(100vh - 65px);
+      border: none;
+      display: block;
+    }
+    body { overflow: hidden; }
+  </style>
+</head>
+<body>
+  <header class="site-header glass">
+    <div class="nav-wrap container">
+      <a class="brand" href="index.html">
+        <img src="assets/img/logo.jpg" alt="" class="logo" />
+        <span class="brand-text gradient-text">Heterogeneity-Adjusted EWAS Explorer</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="download.html" class="nav-link">Download</a>
+        <a href="explore.html" class="nav-link">Explore</a>
+        <a href="statistics.html" class="nav-link">Statistics</a>
+        <a href="converter.html" class="nav-link active">Converter</a>
+      </nav>
+    </div>
+  </header>
+
+  <iframe class="iframe-container" src="https://huggingface.co/spaces/Shengwei98/haEWAS-Converter/?embed=true" title="haEWAS Converter App"></iframe>
+
+</body>
+</html>
