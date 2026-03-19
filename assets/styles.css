@@ -3,10 +3,10 @@
   --panel: #ffffff;
   --text: #0b1324;
   --muted: #52607a;
-  --brand: #779abc;
-  --brand-2: #94b2d1;
+  --brand: #bc7777eb;
+  --brand-2: #d6a1a1;
   --border: #e6e9f2;
-  --accent: #5e7d9a;
+  --accent: #a35d5d;
   --success: #16a34a;
   --danger: #dc2626;
   --shadow: 0 4px 20px rgba(10, 15, 30, .08);
@@ -43,7 +43,7 @@ html.light .site-header{background:rgba(255,255,255,.7)}
 .nav-wrap{display:flex;align-items:center;gap:16px;min-height:64px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
 .logo{width:28px;height:28px}
-.brand-text{font-weight:700;white-space:nowrap}
+.brand-text{color: #bc7777eb;font-weight:700;white-space:nowrap}
 
 .nav{display:flex;gap:10px;margin-left:auto;margin-right:8px}
 .nav-link{
@@ -51,9 +51,10 @@ html.light .site-header{background:rgba(255,255,255,.7)}
 }
 .nav-link:hover{background:var(--panel);color:var(--brand);box-shadow:var(--shadow)}
 .nav-link.active {
-  color: #fff;
-  /* background: linear-gradient(90deg, var(--brand), var(--accent)); */
-  background: var(--brand);
+  background: #bc7777eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(188, 119, 119, 0.2);
+  border-radius: 8px;
 }
 
 .btn{
@@ -63,24 +64,16 @@ html.light .site-header{background:rgba(255,255,255,.7)}
 }
 .btn:hover{border-color:transparent;box-shadow:var(--shadow)}
 .btn.primary {
-  background: var(--brand);
-  border: 1px solid var(--brand);
-  color: #fff !important;
-  padding: 12px 24px;
-  border-radius: 12px;
+  background: #bc7777eb !important;
+  border: none;
+  color: #ffffff !important;
   transition: all 0.3s ease;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .btn.primary:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff !important;
+  background: #a35d5d !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(119, 154, 188, 0.3);
+  box-shadow: 0 6px 15px rgba(188, 119, 119, 0.3);
 }
 
 .btn.primary:active {
