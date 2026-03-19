@@ -22,17 +22,6 @@
     #resultsTable th:first-child {
       z-index: 3; 
     }
-
-    @media (prefers-color-scheme: dark) {
-      #resultsTable th:first-child,
-      #resultsTable td:first-child { background-color: #1a1a1a; }
-    }
-    html[data-theme="dark"] #resultsTable th:first-child,
-    html[data-theme="dark"] #resultsTable td:first-child,
-    body.dark #resultsTable th:first-child,
-    body.dark #resultsTable td:first-child {
-      background-color: #1a1a1a !important;
-    }
     
     #topScrollWrapper::-webkit-scrollbar { height: 12px; }
     #topScrollWrapper::-webkit-scrollbar-thumb { background: #ccc; border-radius: 6px; }
@@ -45,10 +34,6 @@
       background: transparent;
       border: 1px solid var(--border-color, #eaeaea);
       border-radius: 8px;
-    }
-    html[data-theme="dark"] #plotContainer,
-    body.dark #plotContainer {
-      border-color: #333;
     }
   </style>
 </head>
