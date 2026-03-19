@@ -1,18 +1,4 @@
 :root{
-  --bg: #0b0c10;
-  --panel: #111319;
-  --text: #e7eaf0;
-  --muted: #a8b0bf;
-  --brand: #5aa9e6;
-  --brand-2: #7dd3fc;
-  --border: #222836;
-  --accent: #8b5cf6;
-  --success: #22c55e;
-  --danger: #ef4444;
-  --shadow: 0 4px 20px rgba(0,0,0,.25);
-}
-
-html.light{
   --bg: #f7f8fb;
   --panel: #ffffff;
   --text: #0b1324;
