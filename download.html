@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Download • Heterogeneity-Adjusted EWAS Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Download haEWAS meta-analysis result files (CSV)." />
+  <link rel="icon" href="assets/img/logo.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="assets/styles.css" />
+  <script defer src="assets/theme.js"></script>
+  <script defer src="assets/download.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-wrap container">
+      <a class="brand" href="index.html#home">
+        <img src="assets/img/logo.jpg" alt="Logo" class="logo" />
+        <span class="brand-text gradient-text">Heterogeneity-Adjusted EWAS Explorer</span>
+      </a>
+      <nav class="nav" aria-label="primary">
+        <a href="index.html#home" class="nav-link">Home</a>
+        <a href="download.html" class="nav-link active" aria-current="page">Download</a>
+        <a href="explore.html" class="nav-link">Explore</a>
+        <a href="statistics.html" class="nav-link">Statistics</a>
+        <a href="index.html#citation" class="nav-link">Citation</a>
+      </nav>
+      <button id="themeToggle" class="btn ghost" aria-label="Toggle color theme">Theme</button>
+    </div>
+  </header>
+
+  <main class="container section">
+    <h1 class="page-title">Download Datasets</h1>
+    <p class="page-subtitle">
+      Browse and download all available haEWAS meta-analysis result files (CSV) listed in <code>data/downloads/index.json</code>.
+    </p>
+
+    <form id="dlFilters" class="filters">
+      <div class="field grow">
+        <label for="fQuery">Search Datasets</label>
+        <input id="fQuery" class="input" type="search" placeholder="Search by dataset or filename…" />
+      </div>
+
+      <button type="button" id="dlReset" class="btn ghost">Reset</button>
+    </form>
+
+    <div class="table-wrap">
+      <table class="table" id="dlTable">
+        <thead>
+          <tr>
+            <th>Filename</th>
+            <th>Dataset</th>
+            <th>Size</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <div id="dlCount"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Heterogeneity-Adjusted EWAS Explorer.</p>
+    </div>
+  </footer>
+</body>
+</html>

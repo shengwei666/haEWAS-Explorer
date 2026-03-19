@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Heterogeneity-Adjusted EWAS Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Explore heterogeneity-Adjusted EWAS meta-analyses with Beta, CHALM, and CAMDA metrics." />
+
+  <link rel="icon" href="assets/img/logo.jpg" type="image/jpeg">
+  <link rel="preload" as="image" href="assets/img/logo.jpg">
+
+  <link rel="stylesheet" href="assets/styles.css" />
+  <script defer src="assets/theme.js"></script>
+  <script defer src="assets/main.js"></script>
+</head>
+<body>
+  <!-- Decorative gradient background -->
+  <div class="bg-orb orb-1" aria-hidden="true"></div>
+  <div class="bg-orb orb-2" aria-hidden="true"></div>
+
+  <!-- Top Navigation -->
+  <header class="site-header glass">
+    <div class="nav-wrap container">
+      <a class="brand" href="index.html#home" aria-label="Heterogeneity-Adjusted EWAS Explorer home">
+        <img src="assets/img/logo.jpg" alt="" class="logo" />
+        <span class="brand-text gradient-text">Heterogeneity-Adjusted EWAS Explorer</span>
+      </a>
+
+      <nav class="nav" aria-label="primary">
+        <a href="index.html#home" class="nav-link active" aria-current="page">Home</a>
+        <a href="download.html" class="nav-link">Download</a>
+        <a href="explore.html" class="nav-link">Explore</a>
+        <a href="statistics.html" class="nav-link">Statistics</a>
+        <a href="index.html#citation" class="nav-link">Citation</a>
+      </nav>
+
+      <button id="themeToggle" class="btn ghost" aria-label="Toggle color theme" title="Toggle theme">Theme</button>
+    </div>
+  </header>
+
+  <main id="home">
+    <!-- Hero (single column). Title + lede same width as figures -->
+    <section class="hero container hero-split reveal">
+      <div class="hero-copy">
+        <h1 class="display gradient-text display-full">Welcome to Heterogeneity-Adjusted EWAS Explorer!</h1>
+        <p class="lede lede-full">
+          A comprehensive and interactive portal for exploring meta-analysis summaries across conventional Beta and Heterogeneity-Adjusted (haEWAS) methylation metrics. Discover and visualize novel epigenetic markers driven by methylation heterogeneity (CHALM) and co-methylation (CAMDA) that are routinely overlooked by traditional EWAS.
+        </p>
+        <div class="cta-row">
+          <a class="btn primary btn-lg" href="explore.html">Start Exploring</a>
+          <a class="btn outline btn-lg" href="download.html">Get Data</a>
+        </div>
+        <ul class="hero-highlights">
+          <li><strong>Global Statistics Dashboard:</strong> Interactive visual summaries comparing haEWAS vs. conventional EWAS, including primary heterogeneity drivers and genomic context distributions across all phenotypes.</li>
+  <li><strong>Dynamic Data Exploration:</strong> Real-time, clickable Manhattan plots seamlessly linked to comprehensive data tables. Effortlessly filter by Phenotype, Chromosome, Group, and haEWAS Driver.</li>
+  <li><strong>Deep Mining & Downloads:</strong> Search for specific CpG IDs or Genes, investigate detailed effect sizes, and seamlessly download full summary statistics for downstream reproducibility.</li>
+        </ul>
+      </div>
+      <!-- right visual intentionally removed -->
+    </section>
+
+    <!-- Overview above figures -->
+    <section class="section container reveal">
+      <h3 class="h2-tight">Why Heterogeneity-Adjusted EWAS (haEWAS)?</h3>
+      <p class="justify">
+        Epigenome-wide association studies (EWAS) have identified numerous DNA methylation alterations associated with disease and complex traits. To date, most EWAS rely on microarray-derived Beta values, which represent mean methylation levels in bulk tissues. However, the same mean methylation level can mask fundamentally different degrees of <strong>single-molecule methylation heterogeneity</strong>. While existing deconvolution methods can correct for cell-type abundance, they cannot resolve this intrinsic single-molecule variation. Historically, capturing this heterogeneity required whole-genome bisulfite sequencing (WGBS)—a method too costly for large population-based studies.
+      </p>
+      <p class="justify">
+        To bridge this gap, we developed a computational framework that infers methylation heterogeneity directly from standard methylation array signals. By establishing a mapping between mean methylation levels and single-molecule heterogeneity metrics—such as
+        <strong><a href="https://www.nature.com/articles/s41467-020-20492-7" target="_blank" rel="noopener" aria-label="CHALM paper on Nature Communications">CHALM</a></strong>
+        and
+        <strong><a href="https://www.nature.com/articles/s41467-021-25521-7" target="_blank" rel="noopener" aria-label="CAMDA paper on Nature Communications">CAMDA</a></strong>—our approach enables <strong>Heterogeneity-Adjusted EWAS (haEWAS)</strong> without the need for sequencing. This framework extends EWAS from a mean-driven association to one driven by inferred heterogeneity, empowering the re-analysis of massive existing array cohorts to uncover disease-associated epigenetic variation previously obscured by conventional EWAS.
+      </p>
+      <p class="justify">
+        This website hosts curated haEWAS meta-analysis summaries across diverse phenotypes, tissues, and analytical models, providing harmonized effect estimates under Beta, CHALM, and CAMDA metrics. Use the <strong>Explore</strong> tab for rich interactive filtering and sorting, or head to <strong>Download</strong> for reproducible CSV exports matching your selections.
+      </p>
+    </section>
+
+    <!-- Concept figures (hover to lift) -->
+    <section class="section container reveal">
+      <div class="figure-grid">
+        <!-- 1) first image full row -->
+        <figure class="concept float full">
+          <img src="assets/img/Project.jpg" alt="Project overview concept figure" loading="lazy">
+        </figure>
+
+        <!-- 2) two half-width images -->
+        <figure class="concept float">
+          <img src="assets/img/CHALM.jpg" alt="CHALM concept figure" loading="lazy">
+          <figcaption><strong>CHALM</strong> — Xu et al., <em>Nat Commun</em> (2021)</figcaption>
+        </figure>
+
+        <figure class="concept float">
+          <img src="assets/img/CAMDA.jpg" alt="CAMDA concept figure" loading="lazy">
+          <figcaption><strong>CAMDA</strong> — Shi et al., <em>Nat Commun</em> (2021)</figcaption>
+        </figure>
+      </div>
+
+      <!-- Note under CHALM & CAMDA (justified) -->
+      <p class="justify" style="margin-top:10px;">
+        <strong>Note:</strong> <strong>CHALM</strong> quantifies the promoter methylation as the ratio of methylated reads (with ≥1 mCpG) to total reads mapped to a given promoter region. <strong>CAMDA</strong> quantifies the concurrence of active DNA methylation and demethylation within the same cell by dissecting reads from bisulfite sequencing.
+      </p>
+    </section>
+
+    <!-- Citation (hover to lift) -->
+    <section id="citation" class="section container reveal">
+      <h2 class="eyebrow">Citation</h2>
+      <div class="citation-card glass float-card">
+        <p>
+          <strong>Name</strong>, et&nbsp;al. Correcting methylation heterogeneity improves epigenome-wide discovery of phenotype-associated CpGs.
+          <em>Preprint/Journal</em>, 2026. DOI: <span class="doi">TBD</span>.
+        </p>
+        <button class="btn ghost" id="copyCitationBtn" aria-label="Copy citation">Copy citation</button>
+        <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Heterogeneity-Adjusted EWAS Explorer. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

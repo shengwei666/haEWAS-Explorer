@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Explore • Heterogeneity-Adjusted EWAS Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive filtering and sorting for haEWAS meta-analysis summaries." />
+  <link rel="icon" href="assets/img/logo.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="assets/styles.css" />
+  <script defer src="assets/theme.js"></script>
+  <script defer src="assets/explore.js"></script>
+  
+  <script src="assets/plotly.min.js"></script>
+  <style>
+    #resultsTable th:first-child,
+    #resultsTable td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background-color: #ffffff; 
+      box-shadow: 2px 0 5px rgba(0,0,0,0.05); 
+    }
+    #resultsTable th:first-child {
+      z-index: 3; 
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #resultsTable th:first-child,
+      #resultsTable td:first-child { background-color: #1a1a1a; }
+    }
+    html[data-theme="dark"] #resultsTable th:first-child,
+    html[data-theme="dark"] #resultsTable td:first-child,
+    body.dark #resultsTable th:first-child,
+    body.dark #resultsTable td:first-child {
+      background-color: #1a1a1a !important;
+    }
+    
+    #topScrollWrapper::-webkit-scrollbar { height: 12px; }
+    #topScrollWrapper::-webkit-scrollbar-thumb { background: #ccc; border-radius: 6px; }
+    #topScrollWrapper::-webkit-scrollbar-track { background: transparent; }
+
+    #plotContainer {
+      width: 100%;
+      height: 500px;
+      margin-bottom: 20px;
+      background: transparent;
+      border: 1px solid var(--border-color, #eaeaea);
+      border-radius: 8px;
+    }
+    html[data-theme="dark"] #plotContainer,
+    body.dark #plotContainer {
+      border-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-wrap container">
+      <a class="brand" href="index.html#home">
+        <img src="assets/img/logo.jpg" alt="Logo" class="logo" />
+        <span class="brand-text gradient-text">Heterogeneity-Adjusted EWAS Explorer</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html#home" class="nav-link">Home</a>
+        <a href="download.html" class="nav-link">Download</a>
+        <a href="explore.html" class="nav-link active" aria-current="page">Explore</a>
+        <a href="statistics.html" class="nav-link">Statistics</a>
+        <a href="index.html#citation" class="nav-link">Citation</a>
+      </nav>
+      <button id="themeToggle" class="btn ghost" aria-label="Toggle color theme">Theme</button>
+    </div>
+  </header>
+
+  <main class="container section">
+    <h1 class="page-title">Explore Meta-analysis Results</h1>
+    <p class="page-subtitle">
+      Filter and sort across <strong>Phenotype</strong>, <strong>Chromosome</strong>, <strong>Group</strong>, and <strong>haEWAS_Driver</strong>.
+    </p>
+
+    <form id="filters" class="filters">
+      <div class="field">
+        <label for="phenotype">Phenotype</label>
+        <select id="phenotype" class="select">
+          <option value="">All</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="chromosome">Chromosome</label>
+        <select id="chromosome" class="select">
+          <option value="">All</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="group">Group</label>
+        <select id="group" class="select">
+          <option value="">All</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="driver">haEWAS_Driver</label>
+        <select id="driver" class="select">
+          <option value="">All</option>
+        </select>
+      </div>
+
+      <div class="field grow">
+        <label for="search">Search</label>
+        <input id="search" class="input" type="search" placeholder="Search CpG, Gene..." />
+      </div>
+
+      <button type="button" id="resetBtn" class="btn ghost">Reset</button>
+    </form>
+
+    <div id="plotContainer"></div>
+
+    <div id="topScrollWrapper" style="overflow-x: auto; margin-bottom: 4px;">
+      <div id="topScrollDummy" style="height: 1px;"></div>
+    </div>
+
+    <div class="table-wrap" id="tableWrap" style="overflow-x: auto;">
+      <table id="resultsTable" class="table">
+        <thead>
+          <tr>
+            <th data-sort="CpG_ID">CpG_ID</th>
+            <th data-sort="Phenotype">Phenotype</th>
+            <th data-sort="Chromosome">Chromosome</th>
+            <th data-sort="Start">Start</th>
+            <th data-sort="End">End</th>
+            <th data-sort="Gene_name">Gene_name</th>
+            <th data-sort="Gene_region">Gene_region</th>
+            <th data-sort="Relation_to_island">Relation_to_island</th>
+            <th data-sort="P_Beta">P_Beta</th>
+            <th data-sort="Effect_Beta">Effect_Beta</th>
+            <th data-sort="P_CHALM">P_CHALM</th>
+            <th data-sort="Effect_CHALM">Effect_CHALM</th>
+            <th data-sort="P_CAMDA">P_CAMDA</th>
+            <th data-sort="Effect_CAMDA">Effect_CAMDA</th>
+            <th data-sort="P_haEWAS">P_haEWAS</th>
+            <th data-sort="Effect_haEWAS">Effect_haEWAS</th>
+            <th data-sort="haEWAS_Driver">haEWAS_Driver</th>
+            <th data-sort="Group">Group</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="table-footer" id="tableFooter">
+      <div id="rowCount"></div>
+      
+      <div class="pager-controls" style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+        
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <select id="pageSize" class="select" style="padding: 4px 8px; min-width: auto;">
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="200">200</option>
+            <option value="300">300</option>
+            <option value="400">400</option>
+            <option value="500">500</option>
+          </select>
+          <span style="color: var(--muted); font-size: 0.9em;">rows/page</span>
+        </div>
+
+        <div class="pager" style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn ghost" id="prevPage" disabled>&larr; Prev</button>
+          
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span>Page</span>
+            <input type="number" id="pageInput" class="input" value="1" min="1" style="width: 70px; padding: 4px 0; text-align: center;" />
+            <span> / <span id="totalPagesInfo">1</span></span>
+          </div>
+
+          <button class="btn ghost" id="nextPage">Next &rarr;</button>
+        </div>
+        
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Heterogeneity-Adjusted EWAS Explorer.</p>
+    </div>
+  </footer>
+</body>
+</html>
