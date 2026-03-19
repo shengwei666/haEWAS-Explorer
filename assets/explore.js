@@ -219,21 +219,21 @@ function renderManhattanPlot() {
       let offset = chrOffsets[String(d.Chromosome)];
       if (offset === undefined) return;
 
-      xVals.push(offset + Number(d.Start));
-
-      let plotP;
-      if (d.Group === 'haEWAS-specific') {
-        plotP = Number(d.P_haEWAS);
-      } else if (d.Group === 'EWAS-specific' || d.Group === 'Beta-specific') {
-        plotP = Number(d.P_Beta);
-      } else if (d.Group === 'Common' || d.Group === 'common') {
-        plotP = Number(d.P_Beta);
-      } else {
-        plotP = Number(d.P_haEWAS);
+      let rawP = d.P_haEWAS; 
+      if (d.Group === 'EWAS-specific' || d.Group === 'Beta-specific' || d.Group === 'Common' || d.Group === 'common') {
+        rawP = d.P_Beta;
       }
 
-      if (isNaN(plotP) || plotP <= 0) plotP = 1e-300; 
+      if (rawP === null || rawP === undefined || String(rawP).trim() === '' || String(rawP).toUpperCase() === 'NA') {
+        return; 
+      }
 
+      let plotP = Number(rawP);
+      if (isNaN(plotP) || plotP <= 0) {
+        return; 
+      }
+
+      xVals.push(offset + Number(d.Start));
       yVals.push(-Math.log10(plotP));
 
       let plottedPName = (d.Group === 'haEWAS-specific') ? 'P_haEWAS' : 'P_Beta';
@@ -422,10 +422,12 @@ function initPager() {
 
 function initReset() {
   document.getElementById('resetBtn').addEventListener('click', () => {
-    ['phenotype', 'chromosome', 'group', 'driver', 'search'].forEach(id => {
+    ['phenotype', 'chromosome', 'group', 'driver', 'pValueThresh', 'search'].forEach(id => {
       const el = document.getElementById(id);
-      if (el.tagName === 'SELECT') el.selectedIndex = 0;
-      else el.value = '';
+      if (el) {
+        if (el.tagName === 'SELECT') el.selectedIndex = 0;
+        else el.value = '';
+      }
     });
     applyFilters();
     updateSortIndicators();
@@ -477,13 +479,29 @@ function applyFilters() {
   const grp = document.getElementById('group').value;
   const drv = document.getElementById('driver').value;
   const q  = document.getElementById('search').value.trim().toLowerCase();
+  
+  const threshVal = document.getElementById('pValueThresh').value;
+  const maxP = threshVal ? Number(threshVal) : null;
 
   filtered = rawData.filter(d => {
-    return (!ph || d.Phenotype === ph)
+    const passBasic = (!ph || d.Phenotype === ph)
       && (!chr || String(d.Chromosome) === String(chr))
       && (!grp || d.Group === grp)
       && (!drv || d.haEWAS_Driver === drv)
       && (!q  || [d.CpG_ID, d.Gene_name, d.Gene_region].some(x => String(x ?? '').toLowerCase().includes(q)));
+
+    if (!passBasic) return false;
+
+    if (maxP !== null) {
+      let rawP = d.P_haEWAS; 
+      if (d.Group === 'EWAS-specific' || d.Group === 'Beta-specific' || d.Group === 'Common' || d.Group === 'common') {
+        rawP = d.P_Beta;
+      }
+      let plotP = Number(rawP);
+      if (isNaN(plotP) || plotP > maxP) return false;
+    }
+
+    return true;
   });
 
   sortData();
@@ -566,15 +584,21 @@ function loadCsvWithWorker(url, name) {
   });
 }
 
-async function loadAllCSVsSequentially() {
+async function loadAllCSVsConcurrent(concurrencyLimit = 6) {
   const files = await loadManifest();
   loadingState.totalFiles = files.length;
   loadingState.completedFiles = 0;
   renderLoadingStatus();
 
-  for (const f of files) {
-    await loadCsvWithWorker(f.url, f.name);
-  }
+  let i = 0;
+  const runners = Array(concurrencyLimit).fill().map(async () => {
+    while (i < files.length) {
+      const f = files[i++];
+      await loadCsvWithWorker(f.url, f.name);
+    }
+  });
+
+  await Promise.all(runners);
 }
 
 // ----- Boot -----
@@ -584,7 +608,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initReset();
   initScrollSync(); 
 
-  ['phenotype', 'chromosome', 'group', 'driver', 'search'].forEach(id => {
+  ['phenotype', 'chromosome', 'group', 'driver', 'pValueThresh', 'search'].forEach(id => {
     const el = document.getElementById(id);
     if(el) {
       el.addEventListener('input', applyFilters);
@@ -593,7 +617,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   try {
-    await loadAllCSVsSequentially();
+    await loadAllCSVsConcurrent();
   } catch (e) {
     console.error('Failed to load CSVs:', e);
     const tbody = document.querySelector('#resultsTable tbody');
