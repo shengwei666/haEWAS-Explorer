@@ -66,16 +66,16 @@
       }
     },
     "Braak_Stage_Brain": {
-      "total": 4204,
+      "total": 4181,
       "groups": {
         "Common": 3112,
         "EWAS-specific": 326,
-        "haEWAS-specific": 766
+        "haEWAS-specific": 743
       },
       "drivers": {
-        "Both": 2331,
-        "CHALM": 827,
-        "CAMDA": 720
+        "Both": 2325,
+        "CHALM": 823,
+        "CAMDA": 707
       }
     },
     "Total_PBB_Exposure_Blood": {
@@ -572,7 +572,7 @@
   },
   "groups": {
     "EWAS-specific": 32174,
-    "haEWAS-specific": 30973,
+    "haEWAS-specific": 30950,
     "Common": 17818
   },
   "drivers": {
@@ -582,9 +582,9 @@
       "CAMDA": 4110
     },
     "haEWAS-specific": {
-      "CAMDA": 17610,
-      "CHALM": 10160,
-      "Both": 3203
+      "CAMDA": 17597,
+      "CHALM": 10156,
+      "Both": 3197
     }
   },
   "regions": {
@@ -598,11 +598,11 @@
       "ExonBnd": 63
     },
     "haEWAS-specific": {
-      "Body": 23623,
-      "5'UTR": 6566,
-      "TSS1500": 6275,
-      "TSS200": 3501,
-      "1stExon": 2088,
+      "Body": 23613,
+      "5'UTR": 6549,
+      "TSS1500": 6266,
+      "TSS200": 3491,
+      "1stExon": 2078,
       "3'UTR": 1672,
       "ExonBnd": 205
     },
