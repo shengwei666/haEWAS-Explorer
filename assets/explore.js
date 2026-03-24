@@ -285,8 +285,8 @@ function renderManhattanPlot() {
         `<b>Group:</b> ${d.Group}<br>` +
         `----------------------<br>` +
         `<b>Plotting Y:</b> -log10(${plottedPName})<br>` +
-        `<b>P_haEWAS:</b> ${formatNumber(d.P_haEWAS)}<br>` +
-        `<b>P_Beta:</b> ${formatNumber(d.P_Beta)}`
+        `<b>P_haEWAS:</b> ${formatNumber(d.P_haEWAS)} (FDR: ${formatNumber(d.FDR_haEWAS)})<br>` +
+        `<b>P_Beta:</b> ${formatNumber(d.P_Beta)} (FDR: ${formatNumber(d.FDR_Beta)})`
       );
     });
 
