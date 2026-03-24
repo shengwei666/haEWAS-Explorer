@@ -4,7 +4,7 @@ const PROJECT_SLUG = 'hetero-ewas-explorer';
 const UPDATE_INTERVAL_MS = 300; 
 const MANIFEST_REL = 'data/downloads/index.json';
 const CSV_DIR_REL  = 'data/downloads';
-const CACHE_VERSION = "v2.0";
+const CACHE_VERSION = "v3.0";
 
 function detectBasePrefix() {
   const p = location.pathname;
@@ -100,8 +100,8 @@ function sortData() {
   const key = sortKey;
   const numericKeys = [
     'Start', 'End', 
-    'P_Beta', 'Effect_Beta', 
-    'P_haEWAS', 'Effect_haEWAS'
+    'P_Beta', 'Effect_Beta', 'FDR_Beta',
+    'P_haEWAS', 'Effect_haEWAS', 'FDR_haEWAS'
   ];
 
   filtered.sort((a, b) => {
@@ -170,8 +170,10 @@ function renderTable(force = false) {
       <td>${d.Relation_to_island ?? ''}</td>
       <td>${formatNumber(d.P_haEWAS)}</td>
       <td>${formatNumber(d.Effect_haEWAS)}</td>
+      <td>${formatNumber(d.FDR_haEWAS)}</td>
       <td>${formatNumber(d.P_Beta)}</td>
       <td>${formatNumber(d.Effect_Beta)}</td>
+      <td>${formatNumber(d.FDR_Beta)}</td>
       <td>${d.Group ?? ''}</td>
     `;
     tbody.appendChild(tr);
@@ -638,6 +640,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (e) {
     console.error('Failed to load CSVs:', e);
     const tbody = document.querySelector('#resultsTable tbody');
-    tbody.innerHTML = `<tr><td colspan="13" style="text-align:center;">Failed to load data. ${String(e?.message || e)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Failed to load data. ${String(e?.message || e)}</td></tr>`;
   }
 });

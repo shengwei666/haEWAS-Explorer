@@ -43,10 +43,12 @@ self.onmessage = (e) => {
           Gene_name: d.gene_name || d.Gene_name,
           Gene_region: d.gene_region || d.Gene_region,
           Relation_to_island: d.relation_to_island || d.Relation_to_island,
-          P_Beta: +d.P_Beta,
-          Effect_Beta: +d.Effect_Beta,
           P_haEWAS: +d.P_haEWAS,
           Effect_haEWAS: +d.Effect_haEWAS,
+          FDR_haEWAS: +d.FDR_haEWAS,
+          P_Beta: +d.P_Beta,
+          Effect_Beta: +d.Effect_Beta,
+          FDR_Beta: +d.FDR_Beta,
           Group: cleanGroup,
           Source: fileLabel
         };
