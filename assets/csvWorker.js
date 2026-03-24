@@ -45,13 +45,8 @@ self.onmessage = (e) => {
           Relation_to_island: d.relation_to_island || d.Relation_to_island,
           P_Beta: +d.P_Beta,
           Effect_Beta: +d.Effect_Beta,
-          P_CHALM: +d.P_CHALM,
-          Effect_CHALM: +d.Effect_CHALM,
-          P_CAMDA: +d.P_CAMDA,
-          Effect_CAMDA: +d.Effect_CAMDA,
           P_haEWAS: +d.P_haEWAS,
           Effect_haEWAS: +d.Effect_haEWAS,
-          haEWAS_Driver: d.haEWAS_Driver || d.HaEWAS_Driver, 
           Group: cleanGroup,
           Source: fileLabel
         };

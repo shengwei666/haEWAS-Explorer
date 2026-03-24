@@ -4,7 +4,7 @@ const PROJECT_SLUG = 'hetero-ewas-explorer';
 const UPDATE_INTERVAL_MS = 300; 
 const MANIFEST_REL = 'data/downloads/index.json';
 const CSV_DIR_REL  = 'data/downloads';
-const CACHE_VERSION = "v1.0";
+const CACHE_VERSION = "v2.0";
 
 function detectBasePrefix() {
   const p = location.pathname;
@@ -101,8 +101,6 @@ function sortData() {
   const numericKeys = [
     'Start', 'End', 
     'P_Beta', 'Effect_Beta', 
-    'P_CHALM', 'Effect_CHALM', 
-    'P_CAMDA', 'Effect_CAMDA', 
     'P_haEWAS', 'Effect_haEWAS'
   ];
 
@@ -124,29 +122,24 @@ function updateSelects() {
   const ph = document.getElementById('phenotype');
   const chr = document.getElementById('chromosome');
   const grp = document.getElementById('group');
-  const drv = document.getElementById('driver');
 
-  if(!ph || !chr || !grp || !drv) return;
+  if(!ph || !chr || !grp) return;
 
   const valPh = ph.value;
   const valChr = chr.value;
   const valGrp = grp.value;
-  const valDrv = drv.value;
 
   ph.innerHTML = '<option value="">All</option>';
   chr.innerHTML = '<option value="">All</option>';
   grp.innerHTML = '<option value="">All</option>';
-  drv.innerHTML = '<option value="">All</option>';
 
   uniqueValues(rawData, 'Phenotype').forEach(v => ph.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`));
   uniqueValues(rawData, 'Chromosome').forEach(v => chr.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`));
   uniqueValues(rawData, 'Group').forEach(v => grp.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`));
-  uniqueValues(rawData, 'haEWAS_Driver').forEach(v => drv.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`));
 
   if (valPh) ph.value = valPh;
   if (valChr) chr.value = valChr;
   if (valGrp) grp.value = valGrp;
-  if (valDrv) drv.value = valDrv;
 }
 
 function renderTable(force = false) {
@@ -175,15 +168,10 @@ function renderTable(force = false) {
       <td style="white-space: normal; word-break: break-word; min-width: 120px; max-width: 250px;">${d.Gene_name ?? ''}</td>
       <td style="white-space: normal; word-break: break-word; min-width: 120px; max-width: 250px;">${d.Gene_region ?? ''}</td>
       <td>${d.Relation_to_island ?? ''}</td>
-      <td>${formatNumber(d.P_Beta)}</td>
-      <td>${formatNumber(d.Effect_Beta)}</td>
-      <td>${formatNumber(d.P_CHALM)}</td>
-      <td>${formatNumber(d.Effect_CHALM)}</td>
-      <td>${formatNumber(d.P_CAMDA)}</td>
-      <td>${formatNumber(d.Effect_CAMDA)}</td>
       <td>${formatNumber(d.P_haEWAS)}</td>
       <td>${formatNumber(d.Effect_haEWAS)}</td>
-      <td>${d.haEWAS_Driver ?? ''}</td>
+      <td>${formatNumber(d.P_Beta)}</td>
+      <td>${formatNumber(d.Effect_Beta)}</td>
       <td>${d.Group ?? ''}</td>
     `;
     tbody.appendChild(tr);
@@ -440,7 +428,7 @@ function initPager() {
 
 function initReset() {
   document.getElementById('resetBtn').addEventListener('click', () => {
-    ['phenotype', 'chromosome', 'group', 'driver', 'pValueThresh', 'search'].forEach(id => {
+    ['phenotype', 'chromosome', 'group', 'pValueThresh', 'search'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
         if (el.tagName === 'SELECT') el.selectedIndex = 0;
@@ -491,7 +479,6 @@ function applyFilters() {
   const ph = document.getElementById('phenotype').value;
   const chr = document.getElementById('chromosome').value;
   const grp = document.getElementById('group').value;
-  const drv = document.getElementById('driver').value;
   const q  = document.getElementById('search').value.trim().toLowerCase();
   
   const threshVal = document.getElementById('pValueThresh').value;
@@ -501,7 +488,6 @@ function applyFilters() {
     const passBasic = (!ph || d.Phenotype === ph)
       && (!chr || String(d.Chromosome) === String(chr))
       && (!grp || d.Group === grp)
-      && (!drv || d.haEWAS_Driver === drv)
       && (!q  || [d.CpG_ID, d.Gene_name, d.Gene_region].some(x => String(x ?? '').toLowerCase().includes(q)));
 
     if (!passBasic) return false;
@@ -652,6 +638,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (e) {
     console.error('Failed to load CSVs:', e);
     const tbody = document.querySelector('#resultsTable tbody');
-    tbody.innerHTML = `<tr><td colspan="18" style="text-align:center;">Failed to load data. ${String(e?.message || e)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="13" style="text-align:center;">Failed to load data. ${String(e?.message || e)}</td></tr>`;
   }
 });
